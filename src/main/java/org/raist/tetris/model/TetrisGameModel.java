@@ -16,7 +16,7 @@
 
 package org.raist.tetris.model;
 
-import org.raist.tetris.control.TetrisGameCommand;
+import org.raist.tetris.controller.TetrisGameCommand;
 import org.raist.tetris.model.entity.Block;
 import org.raist.tetris.model.entity.GameState;
 

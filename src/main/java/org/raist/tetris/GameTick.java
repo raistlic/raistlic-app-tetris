@@ -19,7 +19,7 @@ package org.raist.tetris;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import org.raist.tetris.control.TetrisGameControl;
+import org.raist.tetris.controller.TetrisGameController;
 import org.raist.tetris.model.TetrisGameModel;
 import org.raist.common.stopwatch.StopWatch;
 import org.raist.common.stopwatch.StopWatchFactory;
@@ -31,19 +31,19 @@ import org.raist.common.stopwatch.StopWatchFactory;
 class GameTick implements ActionListener {
   
   private TetrisGameModel model;
-  private TetrisGameControl control;
+  private TetrisGameController control;
   private Component view;
   
   private StopWatch watchRepaint;
   
-  GameTick(TetrisGameModel model, Component view, TetrisGameControl control) {
+  GameTick(TetrisGameModel model, Component view, TetrisGameController control, int fps) {
     
     this.model = model;
     this.view = view;
     this.control = control;
     
     this.watchRepaint = StopWatchFactory.newNanoWatch();
-    this.watchRepaint.setTick(1000 * 1000 * 1000L / LocalConfig.DEFAULT_FPS);
+    this.watchRepaint.setTick(1000 * 1000 * 1000L / fps);
   }
 
   @Override

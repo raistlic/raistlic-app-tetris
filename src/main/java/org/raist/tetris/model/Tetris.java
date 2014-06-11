@@ -17,6 +17,7 @@
 package org.raist.tetris.model;
 
 import java.util.Random;
+
 import org.raist.tetris.model.entity.BlockType;
 
 /**
