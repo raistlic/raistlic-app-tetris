@@ -16,30 +16,25 @@
 
 package org.raist.tetris.view.defaultview;
 
-import java.awt.AlphaComposite;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Composite;
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.util.EnumSet;
-import java.util.Set;
 import org.raist.tetris.graphics.BasePencils;
 import org.raist.tetris.graphics.BorderPencils;
-import org.raist.ui.graphics.Pencil;
 import org.raist.tetris.model.Matrix;
 import org.raist.tetris.model.TetrisGameModel;
 import org.raist.tetris.model.entity.Block;
 import org.raist.tetris.model.entity.BlockState;
 import org.raist.tetris.model.entity.BlockType;
 import org.raist.tetris.model.entity.GameState;
+import org.raist.ui.graphics.Pencil;
+
+import java.awt.*;
+import java.util.EnumSet;
+import java.util.Set;
 
 /**
  *
  * @author raistlic
  */
-public class MatrixTetrisNextPencil implements Pencil<TetrisGameModel> {
+class MatrixTetrisNextPencil implements Pencil<TetrisGameModel> {
   
   private BasePencils pencilsBase;
   private BorderPencils pencilsBorder;
@@ -52,7 +47,7 @@ public class MatrixTetrisNextPencil implements Pencil<TetrisGameModel> {
   MatrixTetrisNextPencil(Component c) {
     
     this.observer = c;
-    setSize(20);
+    setSize(30);
   }
   
   final void setSize(int size) {

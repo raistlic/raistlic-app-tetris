@@ -16,24 +16,19 @@
 
 package org.raist.tetris.view.defaultview;
 
-import java.awt.AlphaComposite;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Composite;
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.util.EnumSet;
-import java.util.Set;
 import org.raist.tetris.graphics.BasePencils;
 import org.raist.tetris.graphics.BorderPencils;
-import org.raist.ui.graphics.Pencil;
 import org.raist.tetris.model.Matrix;
 import org.raist.tetris.model.TetrisGameModel;
 import org.raist.tetris.model.entity.Block;
 import org.raist.tetris.model.entity.BlockState;
 import org.raist.tetris.model.entity.BlockType;
 import org.raist.tetris.model.entity.GameState;
+import org.raist.ui.graphics.Pencil;
+
+import java.awt.*;
+import java.util.EnumSet;
+import java.util.Set;
 
 /**
  *
@@ -54,7 +49,7 @@ class MatrixTetrisHoldPencil implements Pencil<TetrisGameModel> {
   MatrixTetrisHoldPencil(Component c) {
 
     this.observer = c;
-    setSize(20);
+    setSize(30);
   }
 
   final void setSize(int size) {
@@ -68,10 +63,8 @@ class MatrixTetrisHoldPencil implements Pencil<TetrisGameModel> {
   @Override
   public Dimension getPreferredPaperSize(TetrisGameModel value) {
 
-    int width = size * value.getNextTetris(0).getWidth();
-    int height = size * value.getNextTetris(0).getHeight();
-    int count = value.getNextTetrisCount();
-    height = height * count + (5 * (count - 1));
+    int width = size * value.getHoldTetris().getWidth();
+    int height = size * value.getHoldTetris().getHeight();
 
     return new Dimension(width, height);
   }

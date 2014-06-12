@@ -71,7 +71,7 @@ public class Main {
           frame.setContentPane(view);
           frame.addKeyListener(controller.getKeyListener());
           frame.pack();
-          frame.setMinimumSize(new Dimension(800, 600));
+          frame.setMinimumSize(frame.getSize());
           frame.setLocationRelativeTo(null);
           frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
           frame.setVisible(true);
