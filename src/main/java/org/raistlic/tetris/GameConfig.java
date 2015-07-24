@@ -28,9 +28,9 @@ enum GameConfig {
 
   ImageBackground ("image.background", "/images/background.jpg"),
 
-  ClassModelFactory        ("class.model.factory",      "org.raist.tetris.model.defaultmodel.DefaultTetrisGameModelFactory"),
-  ClassControllerFactory   ("class.controller.factory", "org.raist.tetris.controller.defaultcontroller.DefaultTetrisGameControllerFactory"),
-  ClassViewFactory         ("class.view.factory",       "org.raist.tetris.view.defaultview.DefaultTetrisGameViewFactory"),
+  ClassModelFactory        ("class.model.factory",      "org.raistlic.tetris.model.defaultmodel.DefaultTetrisGameModelFactory"),
+  ClassControllerFactory   ("class.controller.factory", "org.raistlic.tetris.controller.defaultcontroller.DefaultTetrisGameControllerFactory"),
+  ClassViewFactory         ("class.view.factory",       "org.raistlic.tetris.view.defaultview.DefaultTetrisGameViewFactory"),
 
   FPS  ("fps", "100"),
 
