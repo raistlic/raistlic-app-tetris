@@ -18,9 +18,12 @@ package org.raistlic.tetris.controller;
 
 import org.raistlic.tetris.model.TetrisGameModel;
 
+import javax.swing.JComponent;
+import java.util.function.Consumer;
+
 /**
  *
  * @author raistlic
  */
-public interface TetrisGameController extends GameControl<TetrisGameCommand, TetrisGameModel> {
+public interface TetrisGameController extends GameControl<TetrisGameCommand, TetrisGameModel>, Consumer<JComponent> {
 }

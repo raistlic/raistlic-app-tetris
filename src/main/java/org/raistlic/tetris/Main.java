@@ -28,6 +28,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
+import javax.swing.WindowConstants;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -65,6 +66,7 @@ public class Main {
           viewFactory.setModel(model);
           viewFactory.setBackground(loadBackgroundImage(config));
           JComponent view = viewFactory.build();
+          controller.accept(view);
 
           JFrame frame = new JFrame(config.getProperty(GameConfig.GameTitle.key));
           frame.setContentPane(view);
@@ -72,7 +74,7 @@ public class Main {
           frame.pack();
           frame.setMinimumSize(frame.getSize());
           frame.setLocationRelativeTo(null);
-          frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+          frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
           frame.setVisible(true);
 
           int fps = getFPS(config);

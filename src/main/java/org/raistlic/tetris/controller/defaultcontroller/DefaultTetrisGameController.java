@@ -22,9 +22,16 @@ import org.raistlic.tetris.controller.TetrisGameCommand;
 import org.raistlic.tetris.controller.TetrisGameController;
 import org.raistlic.tetris.model.TetrisGameModel;
 
+import javax.swing.JComponent;
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.*;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author raistlic
@@ -100,6 +107,75 @@ class DefaultTetrisGameController implements TetrisGameController {
     model.tick(current);
   }
 
+//  @Override
+//  public void accept(JComponent source) {
+//
+//    InputMap inputMap = source.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+//    ActionMap actionMap = source.getActionMap();
+//    map.keySet().forEach((Integer keyCode) -> {
+//      inputMap.put(KeyStroke.getKeyStroke(keyCode, 0), "action" + keyCode);
+//      actionMap.put("action" + keyCode, new AbstractAction() {
+//        @Override
+//        public void actionPerformed(ActionEvent e) {
+//
+//          keyPressed(keyCode);
+//        }
+//      });
+//    });
+//  }
+  
+  @Override
+  public void accept(JComponent source) {
+
+    System.out.println("installing key dispatcher ... ");
+    KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
+
+      @Override
+      public boolean dispatchKeyEvent(KeyEvent keyEvent) {
+
+        if ((keyEvent.getID() & KeyEvent.KEY_PRESSED) != 0) {
+          System.out.println(keyEvent.getKeyChar());
+          keyPressed(keyEvent.getKeyCode());
+        } else if ((keyEvent.getID() & KeyEvent.KEY_RELEASED) != 0) {
+          keyReleased(keyEvent.getKeyCode());
+        }
+        return false;
+      }
+    });
+
+//    Keymap keymap = JTextComponent.addKeymap("tetrisComponent", null);
+//
+//    map.keySet().forEach((Integer keyCode) -> 
+//        keymap.addActionForKeyStroke(KeyStroke.getKeyStroke(keyCode, 0), new AbstractAction() {
+//      @Override
+//      public void actionPerformed(ActionEvent e) {
+//
+//        keyPressed(keyCode);
+//      }
+//    }));
+//    ((JTextComponent) source).setKeymap(keymap);
+  }
+  
+  private void keyPressed(int keyCode) {
+    
+    TetrisGameCommand cmd = map.get(keyCode);
+    if( cmd == null )
+      return;
+
+    Set<Integer> set = board.get(cmd);
+    if( set.contains(keyCode) )
+      return;
+
+    set.add(keyCode);
+    watches[cmd.ordinal()].setTick(-1);
+  }
+  
+  private void keyReleased(int keyCode) {
+    TetrisGameCommand cmd = map.get(keyCode);
+    if( cmd != null )
+      board.get(cmd).remove(keyCode);
+  }
+
   private class KeyEventHandler implements KeyListener {
 
     @Override
@@ -108,26 +184,14 @@ class DefaultTetrisGameController implements TetrisGameController {
     @Override
     public void keyPressed(KeyEvent e) {
 
-      int keyCode = e.getKeyCode();
-      TetrisGameCommand cmd = map.get(keyCode);
-      if( cmd == null )
-        return;
-
-      Set<Integer> set = board.get(cmd);
-      if( set.contains(keyCode) )
-        return;
-
-      set.add(keyCode);
-      watches[cmd.ordinal()].setTick(-1);
+//      DefaultTetrisGameController.this.keyPressed(e.getKeyCode());
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
 
       int keyCode = e.getKeyCode();
-      TetrisGameCommand cmd = map.get(keyCode);
-      if( cmd != null )
-        board.get(cmd).remove(keyCode);
+      DefaultTetrisGameController.this.keyReleased(e.getKeyCode());
     }
   }
 }
