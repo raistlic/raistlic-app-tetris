@@ -1,5 +1,6 @@
 package org.raistlic.tetris.view.defaultview;
 
+import org.raistlic.common.precondition.Precondition;
 import org.raistlic.tetris.model.TetrisGameModel;
 import org.raistlic.tetris.view.TetrisGameViewFactory;
 
@@ -23,19 +24,12 @@ public class DefaultTetrisGameViewFactory implements TetrisGameViewFactory {
 
   @Override
   public JComponent build() {
-
+    Precondition.assertContext(model != null, "model cannot be null");
     return new DefaultTetrisGamePanel(background, model);
   }
 
   @Override
-  public boolean isReady() {
-
-    return model != null;
-  }
-
-  @Override
   public void setBackground(BufferedImage image) {
-
     this.background = image;
   }
 }

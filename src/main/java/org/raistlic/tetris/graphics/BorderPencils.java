@@ -16,7 +16,10 @@
 
 package org.raistlic.tetris.graphics;
 
+import org.raistlic.common.precondition.Param;
+import org.raistlic.common.util.ObjectBuilder;
 import org.raistlic.ui.graphics.Pencil;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics2D;
@@ -26,36 +29,34 @@ import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
-import org.raistlic.common.Factory;
+import java.util.function.Supplier;
 
 /**
  *
  * @author raistlic
  */
-public class BorderPencils implements Factory<Pencil<? super Component>> {
+public class BorderPencils implements ObjectBuilder<Pencil<? super Component>> {
   
   private static final Color DEFAULT_FILL = new Color(230, 230, 230);
+
   private static final Color DEFAULT_LINE = new Color(250, 250, 250);
   
   public static BorderPencils newInstance(int size) {
-    
     return newInstance(size, DEFAULT_FILL, DEFAULT_LINE);
   }
   
   public static BorderPencils newInstance(int size, Color fill, Color line) {
-    
-    assert size > 10;
-    assert fill != null;
-    assert line != null;
-    
+    Param.isTrue(size > 10, "size must be greater than 10");
+    Param.notNull(fill, "fill cannot be null");
+    Param.notNull(line, "line cannot be null");
     return new BorderPencils(size, fill, line);
   }
   
-  private Color fill;
+  private final Color fill;
   
-  private Color line;
+  private final Color line;
   
-  private Map<Integer, Pencil<? super Component>> pencils;
+  private final Map<Integer, Pencil<? super Component>> pencils;
   
   private int code;
   
@@ -70,8 +71,8 @@ public class BorderPencils implements Factory<Pencil<? super Component>> {
   
   private Map<Integer, Pencil<? super Component>> initPencils(int size) {
     
-    Map<Integer, Pencil<? super Component>> result = 
-            new HashMap<Integer, Pencil<? super Component>>();
+    Map<Integer, Pencil<? super Component>> result =
+            new HashMap<>();
     
     result.put(0, new ImagePencil(initNothing(size)));
     
@@ -149,12 +150,6 @@ public class BorderPencils implements Factory<Pencil<? super Component>> {
     return pencils.get(code);
   }
 
-  @Override
-  public boolean isReady() {
-    
-    return true;
-  }
-  
   private BufferedImage initNothing(int size) {
     
     BufferedImage result = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
@@ -177,13 +172,17 @@ public class BorderPencils implements Factory<Pencil<? super Component>> {
     Rectangle rec = new Rectangle(0, 0, size - 1, size * 2 - 1);
     Area area = new Area(rec);
     area.subtract(new Area(new Rectangle(5, 5, size - 11, size * 2 - 11)));
-    Graphics2D g = result.createGraphics();
+    fillArea(result::createGraphics, area);
+    return result.getSubimage(0, size, size, size);
+  }
+
+  private void fillArea(Supplier<Graphics2D> gs, Area area) {
+    Graphics2D g = gs.get();
     g.setColor(fill);
     g.fill(area);
     g.setColor(line);
     g.draw(area);
     g.dispose();
-    return result.getSubimage(0, size, size, size);
   }
   
   private BufferedImage initUpLeft(int size) {
@@ -196,12 +195,7 @@ public class BorderPencils implements Factory<Pencil<? super Component>> {
     rec = new Rectangle(0, 0, size * 2 - 1, size * 2 - 1);
     Area area = new Area(rec);
     area.subtract(inner);
-    Graphics2D g = result.createGraphics();
-    g.setColor(fill);
-    g.fill(area);
-    g.setColor(line);
-    g.draw(area);
-    g.dispose();
+    fillArea(result::createGraphics, area);
     return result.getSubimage(size, size, size, size);
   }
   
@@ -212,12 +206,7 @@ public class BorderPencils implements Factory<Pencil<? super Component>> {
     Area area = new Area(rec);
     rec = new Rectangle(5, 5, size - 11, size * 3 - 11);
     area.subtract(new Area(rec));
-    Graphics2D g = result.createGraphics();
-    g.setColor(fill);
-    g.fill(area);
-    g.setColor(line);
-    g.draw(area);
-    g.dispose();
+    fillArea(result::createGraphics, area);
     return result.getSubimage(0, size, size, size);
   }
   
@@ -233,14 +222,7 @@ public class BorderPencils implements Factory<Pencil<? super Component>> {
     rec = new Rectangle(0, 0, size * 3 - 1, size * 2 - 1);
     Area area = new Area(rec);
     area.subtract(inner);
-    
-    Graphics2D g = result.createGraphics();
-    g.setColor(fill);
-    g.fill(area);
-    g.setColor(line);
-    g.draw(area);
-    g.dispose();
-    
+    fillArea(result::createGraphics, area);
     return result.getSubimage(size, size, size, size);
   }
   
@@ -262,7 +244,7 @@ public class BorderPencils implements Factory<Pencil<? super Component>> {
     return code;
   }
   
-  private static enum Direction {
+  private enum Direction {
     
     Up, Left, Down, Right;
     
@@ -270,6 +252,5 @@ public class BorderPencils implements Factory<Pencil<? super Component>> {
     
     int set(int code) { return mask | code; }
     boolean isSet(int code) { return (mask & code) != 0; }
-    
   }
 }

@@ -36,12 +36,12 @@ public enum TetrisGameCommand implements GameCommand {
   ;
   
   private final boolean continuous;
-  private final long interval;
+  private final long intervalMillis;
   
-  TetrisGameCommand(boolean continuous, long interval) {
+  TetrisGameCommand(boolean continuous, long intervalMillis) {
     
     this.continuous = continuous;
-    this.interval = interval;
+    this.intervalMillis = intervalMillis;
   }
 
   @Override
@@ -51,8 +51,8 @@ public enum TetrisGameCommand implements GameCommand {
   }
 
   @Override
-  public long getInterval() {
+  public long getIntervalMillis() {
     
-    return interval;
+    return intervalMillis;
   }
 }

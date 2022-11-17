@@ -30,14 +30,14 @@ public interface Matrix<E> {
    * 
    * @return 
    */
-  public int getWidth();
+  int getWidth();
   
   /**
    * 矩阵有高。
    * 
    * @return 
    */
-  public int getHeight();
+  int getHeight();
   
   /**
    * 给定一个坐标，可以查询这个位置的值。
@@ -48,5 +48,5 @@ public interface Matrix<E> {
    * @param y
    * @return 
    */
-  public E get(int x, int y);
+  E get(int x, int y);
 }

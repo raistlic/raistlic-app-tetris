@@ -23,8 +23,11 @@ package org.raistlic.tetris.model.defaultmodel;
 class TetrisManager {
   
   private TetrisMatrix current;
+
   private TetrisMatrix hold;
+
   private TetrisMatrix[] queue;
+
   private int next;
   
   TetrisManager() {

@@ -20,6 +20,9 @@ import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import lombok.extern.slf4j.Slf4j;
 import org.raistlic.tetris.controller.TetrisGameCommand;
 import static org.raistlic.tetris.model.defaultmodel.LocalConfig.*;
 
@@ -39,31 +42,31 @@ import org.raistlic.common.stopwatch.StopWatchFactory;
  */
 class DefaultTetrisGameModel implements TetrisGameModel, Matrix<Block> {
   
-  private Block[][] map;
+  private final Block[][] map;
   
-  private Block empty;
+  private final Block empty;
   
-  private Block query; // for defensive copy
+  private final Block query; // for defensive copy
   
   private GameState state;
   
-  private Map<GameState, Moment[]> moments;
+  private final Map<GameState, Moment[]> moments;
   
-  private TetrisManager tetrisManager;
+  private final TetrisManager tetrisManager;
   
   private int cx;
   
   private int cy;
   
-  private StopWatch watchDown;
+  private final StopWatch watchDown;
   
-  private StopWatch watchAnimation;
+  private final StopWatch watchAnimation;
   
-  private TetrisGameInfor infor;
+  private final TetrisGameInfor infor;
   
-  private TetrisGameSetting setting;
+  private final TetrisGameSetting setting;
   
-  private FPSHelper fps;
+  private final FPSHelper fps;
   
   DefaultTetrisGameModel(TetrisGameSetting setting) {
     
@@ -78,10 +81,8 @@ class DefaultTetrisGameModel implements TetrisGameModel, Matrix<Block> {
     empty = new Block(BlockType.Empty, BlockState.Relic, 0f);
     query = new Block(BlockType.Empty, BlockState.Relic, 0f);
     
-    watchDown = StopWatchFactory.newNanoWatch();
-    watchDown.setTick(this.setting.getDownInterval());
-    watchAnimation = StopWatchFactory.newNanoWatch();
-    watchAnimation.setTick(ANIMATION_LENGTH);
+    watchDown = StopWatchFactory.createStopWatch(this.setting.getDownInterval(), TimeUnit.NANOSECONDS);
+    watchAnimation = StopWatchFactory.createStopWatch(ANIMATION_LENGTH, TimeUnit.NANOSECONDS);
     moments = initMoments();
     tetrisManager = new TetrisManager();
     state = GameState.NotStarted;
@@ -99,6 +100,7 @@ class DefaultTetrisGameModel implements TetrisGameModel, Matrix<Block> {
     }
     
     watchDown.reset(current);
+    watchDown.resume(current);
     setting.reset();
   }
 
@@ -156,7 +158,7 @@ class DefaultTetrisGameModel implements TetrisGameModel, Matrix<Block> {
 
   @Override
   public void tick(long current) {
-    
+
     Moment moment = moments.get(state)[0];
     state = moment.pass(current);
   }
@@ -215,7 +217,7 @@ class DefaultTetrisGameModel implements TetrisGameModel, Matrix<Block> {
   
   private Map<GameState, Moment[]> initMoments() {
     
-    Map<GameState, Moment[]> result = new EnumMap<GameState, Moment[]>(GameState.class);
+    Map<GameState, Moment[]> result = new EnumMap<>(GameState.class);
     
     result.put(GameState.NotStarted, initMomentsNotStarted());
     result.put(GameState.OnGoing, initMomentsOnGoing());
@@ -251,10 +253,9 @@ class DefaultTetrisGameModel implements TetrisGameModel, Matrix<Block> {
 
       @Override
       GameState pass(long current) {
-        
+
         if( watchDown.expired(current) ) {
-          
-          watchDown.tick(current);
+          watchDown.tickForward(current);
           return down(current);
         }
         else return GameState.OnGoing;
@@ -414,7 +415,7 @@ class DefaultTetrisGameModel implements TetrisGameModel, Matrix<Block> {
         else {
           
           long total = watchAnimation.getTick();
-          long passed = watchAnimation.read(current);
+          long passed = watchAnimation.readElapsed(current);
           float alpha = 1.0f - Math.min((float)passed / total, 1.0f);
           for(Block[] row : map)
             for(Block b : row)
@@ -626,7 +627,7 @@ class DefaultTetrisGameModel implements TetrisGameModel, Matrix<Block> {
   
   private void giveReactionTime(long current) {
     
-    long read = watchDown.read(current);
+    long read = watchDown.readElapsed(current);
     long diff = watchDown.getTick() - read;
     if( diff < REACTION_TIME )
       watchDown.set(REACTION_TIME, current);

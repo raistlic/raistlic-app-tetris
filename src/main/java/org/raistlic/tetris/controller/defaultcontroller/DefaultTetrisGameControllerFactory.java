@@ -30,10 +30,4 @@ public class DefaultTetrisGameControllerFactory implements TetrisGameControllerF
     
     return new DefaultTetrisGameController();
   }
-
-  @Override
-  public boolean isReady() {
-    
-    return true;
-  }
 }

@@ -23,7 +23,6 @@ import org.raistlic.tetris.controller.TetrisGameController;
 import org.raistlic.tetris.model.TetrisGameModel;
 
 import javax.swing.JComponent;
-import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -32,6 +31,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author raistlic
@@ -39,23 +39,26 @@ import java.util.Set;
 
 class DefaultTetrisGameController implements TetrisGameController {
 
-  private Map<Integer, TetrisGameCommand> map;
-  private StopWatch[] watches;
-  private Map<TetrisGameCommand, Set<Integer>> board;
+  private static final long ACTIVE_TICK = 123L;
 
-  private KeyListener keyListener;
+  private final Map<Integer, TetrisGameCommand> map;
+
+  private final StopWatch[] watches;
+
+  private final Map<TetrisGameCommand, Set<Integer>> board;
+
+  private final KeyListener keyListener;
 
   DefaultTetrisGameController() {
 
-    map = new HashMap<Integer, TetrisGameCommand>();
+    map = new HashMap<>();
     watches = new StopWatch[TetrisGameCommand.values().length];
-    board = new EnumMap<TetrisGameCommand, Set<Integer>>(TetrisGameCommand.class);
+    board = new EnumMap<>(TetrisGameCommand.class);
     for(TetrisGameCommand cmd : TetrisGameCommand.values()) {
 
-      StopWatch watch = StopWatchFactory.newNanoWatch();
-      watch.setTick(cmd.getInterval() * 1000000L);
+      StopWatch watch = StopWatchFactory.createStopWatch(cmd.getIntervalMillis(), TimeUnit.MILLISECONDS);
       watches[cmd.ordinal()] = watch;
-      board.put(cmd, new HashSet<Integer>());
+      board.put(cmd, new HashSet<>());
     }
 
     keyListener = this.new KeyEventHandler();
@@ -68,7 +71,7 @@ class DefaultTetrisGameController implements TetrisGameController {
   }
 
   @Override
-  public void mapCommandAlternitive(int keyCode, TetrisGameCommand command) {
+  public void mapCommandAlternative(int keyCode, TetrisGameCommand command) {
 
     map.put(keyCode, command);
   }
@@ -87,13 +90,14 @@ class DefaultTetrisGameController implements TetrisGameController {
       int index = cmd.ordinal();
       StopWatch watch = watches[index];
 
-      if( board.get(cmd).isEmpty() )
+      if( board.get(cmd).isEmpty() ) {
         continue;
+      }
 
-      if( watch.getTick() < 0 ) {
+      if( watch.getTick() == ACTIVE_TICK ) {
 
         model.perform(cmd, current);
-        watch.setTick(cmd.getInterval() * 1000000L);
+        watch.setTick(cmd.getIntervalMillis() * 1000000L);
         watch.reset(current);
         continue;
       }
@@ -128,19 +132,13 @@ class DefaultTetrisGameController implements TetrisGameController {
   public void accept(JComponent source) {
 
     System.out.println("installing key dispatcher ... ");
-    KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
-
-      @Override
-      public boolean dispatchKeyEvent(KeyEvent keyEvent) {
-
+    KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(keyEvent -> {
         if ((keyEvent.getID() & KeyEvent.KEY_PRESSED) != 0) {
-          System.out.println(keyEvent.getKeyChar());
           keyPressed(keyEvent.getKeyCode());
         } else if ((keyEvent.getID() & KeyEvent.KEY_RELEASED) != 0) {
           keyReleased(keyEvent.getKeyCode());
         }
         return false;
-      }
     });
 
 //    Keymap keymap = JTextComponent.addKeymap("tetrisComponent", null);
@@ -167,7 +165,7 @@ class DefaultTetrisGameController implements TetrisGameController {
       return;
 
     set.add(keyCode);
-    watches[cmd.ordinal()].setTick(-1);
+    watches[cmd.ordinal()].setTick(ACTIVE_TICK);
   }
   
   private void keyReleased(int keyCode) {
@@ -184,13 +182,12 @@ class DefaultTetrisGameController implements TetrisGameController {
     @Override
     public void keyPressed(KeyEvent e) {
 
-//      DefaultTetrisGameController.this.keyPressed(e.getKeyCode());
+      DefaultTetrisGameController.this.keyPressed(e.getKeyCode());
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
 
-      int keyCode = e.getKeyCode();
       DefaultTetrisGameController.this.keyReleased(e.getKeyCode());
     }
   }

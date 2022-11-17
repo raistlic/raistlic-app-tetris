@@ -127,7 +127,7 @@ public final class Tetris implements Matrix<BlockType> {
   
   // 实例控制，需要一个常量池。
   
-  private static Tetris[][] POOL;
+  private static final Tetris[][] POOL;
   
   static {
     

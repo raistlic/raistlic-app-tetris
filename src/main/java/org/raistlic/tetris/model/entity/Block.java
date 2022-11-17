@@ -26,8 +26,11 @@ public class Block {
   private static long IDSEQUENCE = 0;
   
   private BlockType type;
+
   private BlockState state;
+
   private float animationAlpha;
+
   private long id;
   
   public Block(BlockType type, BlockState state, float animationAlpha) {
@@ -36,7 +39,7 @@ public class Block {
     assert state != null;
     assert animationAlpha >= 0;
     assert animationAlpha <= 1;
-    
+
     this.type = type;
     this.state = state;
     this.animationAlpha = animationAlpha;

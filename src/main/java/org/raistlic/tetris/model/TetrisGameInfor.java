@@ -22,11 +22,11 @@ package org.raistlic.tetris.model;
  */
 public interface TetrisGameInfor {
   
-  public int getScore();
+  int getScore();
   
-  public int getLevel();
+  int getLevel();
   
-  public int getMaxLevel();
+  int getMaxLevel();
   
-  public int getFPS();
+  int getFPS();
 }

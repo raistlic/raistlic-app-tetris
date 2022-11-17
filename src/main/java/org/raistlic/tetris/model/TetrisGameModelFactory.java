@@ -16,11 +16,11 @@
 
 package org.raistlic.tetris.model;
 
-import org.raistlic.common.Factory;
+import org.raistlic.common.util.ObjectBuilder;
 
 /**
  *
  * @author raistlic
  */
-public interface TetrisGameModelFactory extends Factory<TetrisGameModel> {
+public interface TetrisGameModelFactory extends ObjectBuilder<TetrisGameModel> {
 }

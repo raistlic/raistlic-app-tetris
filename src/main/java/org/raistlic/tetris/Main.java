@@ -46,45 +46,41 @@ public class Main {
   
   public static void main(String[] args) {
     
-    SwingUtilities.invokeLater(new Runnable() {
+    SwingUtilities.invokeLater(() -> {
 
-      @Override
-      public void run() {
-        
-        try {
+      try {
 
-          Properties config = loadConfig();
+        Properties config = loadConfig();
 
-          TetrisGameModelFactory modelFactory = loadGameModelFactory(config);
-          TetrisGameModel model = modelFactory.build();
+        TetrisGameModelFactory modelFactory = loadGameModelFactory(config);
+        TetrisGameModel model = modelFactory.build();
 
-          TetrisGameControllerFactory controllerFactory = loadGameControllerFactory(config);
-          TetrisGameController controller = controllerFactory.build();
-          loadKeyBindings(controller, config);
+        TetrisGameControllerFactory controllerFactory = loadGameControllerFactory(config);
+        TetrisGameController controller = controllerFactory.build();
+        loadKeyBindings(controller, config);
 
-          TetrisGameViewFactory viewFactory = loadGameViewFactory(config);
-          viewFactory.setModel(model);
-          viewFactory.setBackground(loadBackgroundImage(config));
-          JComponent view = viewFactory.build();
-          controller.accept(view);
+        TetrisGameViewFactory viewFactory = loadGameViewFactory(config);
+        viewFactory.setModel(model);
+        viewFactory.setBackground(loadBackgroundImage(config));
+        JComponent view = viewFactory.build();
+        controller.accept(view);
 
-          JFrame frame = new JFrame(config.getProperty(GameConfig.GameTitle.key));
-          frame.setContentPane(view);
-          frame.addKeyListener(controller.getKeyListener());
-          frame.pack();
-          frame.setMinimumSize(frame.getSize());
-          frame.setLocationRelativeTo(null);
-          frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-          frame.setVisible(true);
+        JFrame frame = new JFrame(config.getProperty(GameConfig.GameTitle.key));
+        frame.setContentPane(view);
+        frame.addKeyListener(controller.getKeyListener());
+        frame.pack();
+        frame.setMinimumSize(frame.getSize());
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setVisible(true);
 
-          int fps = getFPS(config);
-          GameTick tick = new GameTick(model, view, controller, fps);
-          new Timer(1, tick).start();
-        }
-        catch (Exception ex) {
-          
-          ex.printStackTrace(System.err);
-        }
+        int fps = getFPS(config);
+        GameTick tick = new GameTick(model, view, controller, fps);
+        new Timer(1, tick).start();
+      }
+      catch (Exception ex) {
+
+        ex.printStackTrace(System.err);
       }
     });
   }
@@ -137,18 +133,15 @@ public class Main {
   private static BufferedImage loadBackgroundImage(Properties config) throws IOException {
 
     String path = config.getProperty(GameConfig.ImageBackground.key);
-    InputStream in = Main.class.getResourceAsStream(path);
-    BufferedImage image = ImageIO.read(in);
-    in.close();
-    return image;
+    try (InputStream in = Main.class.getResourceAsStream(path)) {
+      return ImageIO.read(in);
+    }
   }
 
   private static void loadKeyBindings(TetrisGameController controller,
                                       Properties config) {
 
-    Map<GameConfig, TetrisGameCommand> keyCodeConfigs =
-            new EnumMap<GameConfig, TetrisGameCommand>(GameConfig.class);
-
+    Map<GameConfig, TetrisGameCommand> keyCodeConfigs = new EnumMap<>(GameConfig.class);
     keyCodeConfigs.put(GameConfig.KeyCodeLeft, TetrisGameCommand.Left);
     keyCodeConfigs.put(GameConfig.KeyCodeRight, TetrisGameCommand.Right);
     keyCodeConfigs.put(GameConfig.KeyCodeDown, TetrisGameCommand.Down);
@@ -160,7 +153,6 @@ public class Main {
     keyCodeConfigs.put(GameConfig.KeyCodeHold, TetrisGameCommand.Hold);
 
     for (Map.Entry<GameConfig, TetrisGameCommand> entry : keyCodeConfigs.entrySet()) {
-
       int keyCode = Integer.parseInt(config.getProperty(entry.getKey().key));
       controller.mapCommand(keyCode, entry.getValue());
     }

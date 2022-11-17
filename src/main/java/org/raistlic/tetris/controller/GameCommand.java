@@ -25,10 +25,10 @@ public interface GameCommand {
   /**
    * 这个 command 是不是持续性的，就是说，按键一直按下的时候，它是不是一直重复
    */
-  public boolean isContinuous();
+  boolean isContinuous();
   
   /**
    * 两次重复之间的间隔，比如频率是 10次每秒，那么 interval 是 1000 / 10 毫秒。
    */
-  public long getInterval(); // milli seconds
+  long getIntervalMillis(); // milli seconds
 }

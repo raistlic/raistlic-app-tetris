@@ -16,18 +16,19 @@
 
 package org.raistlic.tetris.view;
 
-import java.awt.image.BufferedImage;
-import javax.swing.JComponent;
+import org.raistlic.common.util.ObjectBuilder;
 import org.raistlic.tetris.model.TetrisGameModel;
-import org.raistlic.common.Factory;
+
+import javax.swing.JComponent;
+import java.awt.image.BufferedImage;
 
 /**
  *
  * @author raistlic
  */
-public interface TetrisGameViewFactory extends Factory<JComponent> {
+public interface TetrisGameViewFactory extends ObjectBuilder<JComponent> {
   
-  public void setBackground(BufferedImage image);
+  void setBackground(BufferedImage image);
   
-  public void setModel(TetrisGameModel model);
+  void setModel(TetrisGameModel model);
 }

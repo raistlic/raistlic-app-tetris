@@ -30,10 +30,4 @@ public class DefaultTetrisGameModelFactory implements TetrisGameModelFactory {
     
     return new DefaultTetrisGameModel(TetrisGameSetting.newInstance());
   }
-
-  @Override
-  public boolean isReady() {
-    
-    return true;
-  }
 }

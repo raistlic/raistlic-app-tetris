@@ -24,11 +24,11 @@ import java.awt.event.KeyListener;
  */
 public interface GameControl<C extends Enum & GameCommand, M> {
   
-  public void mapCommand(int keyCode, C command);
+  void mapCommand(int keyCode, C command);
   
-  public void mapCommandAlternitive(int keyCode, C command);
+  void mapCommandAlternative(int keyCode, C command);
   
-  public KeyListener getKeyListener();
+  KeyListener getKeyListener();
   
-  public void tick(M model, long current);
+  void tick(M model, long current);
 }

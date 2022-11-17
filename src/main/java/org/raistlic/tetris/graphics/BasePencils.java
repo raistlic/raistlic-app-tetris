@@ -16,6 +16,7 @@
 
 package org.raistlic.tetris.graphics;
 
+import org.raistlic.common.precondition.Param;
 import org.raistlic.ui.graphics.Pencil;
 import java.awt.Color;
 import java.awt.Component;
@@ -33,23 +34,24 @@ import org.raistlic.tetris.model.entity.BlockType;
 public class BasePencils {
   
   public static BasePencils newInstance(int size) {
-    
-    assert size > 0;
-    
+    Param.isTrue(size > 0, "size must be greater than 0");
     return new BasePencils(size);
   }
   
-  private Map<BlockType, Pencil<Component>> colored;
-  private Map<BlockType, Pencil<Component>[]> coloredAnimation;
-  private Map<BlockType, Pencil<Component>> gray;
-  private Map<BlockType, Pencil<Component>[]> grayAnimation;
+  private final Map<BlockType, Pencil<Component>> colored;
+
+  private final Map<BlockType, Pencil<Component>[]> coloredAnimation;
+
+  private final Map<BlockType, Pencil<Component>> gray;
+
+  private final Map<BlockType, Pencil<Component>[]> grayAnimation;
   
   private BasePencils(int size) {
     
-    colored = new EnumMap<BlockType, Pencil<Component>>(BlockType.class);
-    coloredAnimation = new EnumMap<BlockType, Pencil<Component>[]>(BlockType.class);
-    gray = new EnumMap<BlockType, Pencil<Component>>(BlockType.class);
-    grayAnimation = new EnumMap<BlockType, Pencil<Component>[]>(BlockType.class);
+    colored = new EnumMap<>(BlockType.class);
+    coloredAnimation = new EnumMap<>(BlockType.class);
+    gray = new EnumMap<>(BlockType.class);
+    grayAnimation = new EnumMap<>(BlockType.class);
     
     for(BlockType type : BlockType.values()) {
       
@@ -95,7 +97,7 @@ public class BasePencils {
     return new ImagePencil(image);
   }
   
-  @SuppressWarnings({"unchecked", "rawtypes"})
+  @SuppressWarnings("unchecked")
   private static Pencil<Component>[] initAnimationPencils(Color c, int size) {
     
     Pencil<Component>[] pencils = new Pencil[ANIMATION_LEVELS + 1];
@@ -130,7 +132,7 @@ public class BasePencils {
   private static final Map<BlockType, Color> BASE_COLORS;
   static {
     
-    Map<BlockType, Color> map = new EnumMap<BlockType, Color>(BlockType.class);
+    Map<BlockType, Color> map = new EnumMap<>(BlockType.class);
     map.put(BlockType.Empty, Color.GRAY);
     map.put(BlockType.O, Color.YELLOW.darker());
     map.put(BlockType.I, Color.CYAN.darker());

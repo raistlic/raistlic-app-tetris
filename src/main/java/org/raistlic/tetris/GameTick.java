@@ -19,6 +19,8 @@ package org.raistlic.tetris;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.concurrent.TimeUnit;
+
 import org.raistlic.tetris.controller.TetrisGameController;
 import org.raistlic.tetris.model.TetrisGameModel;
 import org.raistlic.common.stopwatch.StopWatch;
@@ -30,20 +32,21 @@ import org.raistlic.common.stopwatch.StopWatchFactory;
  */
 class GameTick implements ActionListener {
   
-  private TetrisGameModel model;
-  private TetrisGameController control;
-  private Component view;
+  private final TetrisGameModel model;
+
+  private final TetrisGameController control;
+
+  private final Component view;
   
-  private StopWatch watchRepaint;
+  private final StopWatch watchRepaint;
   
   GameTick(TetrisGameModel model, Component view, TetrisGameController control, int fps) {
     
     this.model = model;
     this.view = view;
     this.control = control;
-    
-    this.watchRepaint = StopWatchFactory.newNanoWatch();
-    this.watchRepaint.setTick(1000 * 1000 * 1000L / fps);
+    this.watchRepaint = StopWatchFactory.createStopWatch(1000 * 1000 * 1000L / fps, TimeUnit.NANOSECONDS);
+    this.watchRepaint.resume(System.nanoTime());
   }
 
   @Override
@@ -53,7 +56,7 @@ class GameTick implements ActionListener {
     
     control.tick(model, current);
     
-    long read = watchRepaint.read(current);
+    long read = watchRepaint.readElapsed(current);
     
     int expired = (int)(read / watchRepaint.getTick());
     
@@ -62,7 +65,7 @@ class GameTick implements ActionListener {
       if( expired > 6 )
         watchRepaint.reset(current);
       else
-        watchRepaint.tick(current);
+        watchRepaint.tickForward(current);
       
       model.refreshFPS(current);
       view.repaint();

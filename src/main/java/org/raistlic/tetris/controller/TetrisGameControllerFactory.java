@@ -16,10 +16,10 @@
 
 package org.raistlic.tetris.controller;
 
-import org.raistlic.common.Factory;
+import org.raistlic.common.util.ObjectBuilder;
 
 /**
  *
  * @author raistlic
  */
-public interface TetrisGameControllerFactory extends Factory<TetrisGameController> {}
+public interface TetrisGameControllerFactory extends ObjectBuilder<TetrisGameController> {}

@@ -33,27 +33,27 @@ public interface TetrisGameModel {
    * queries
    ---------------------------------------------------------------------------*/
   
-  public Matrix<Block> getGameArea();
+  Matrix<Block> getGameArea();
   
-  public int getNextTetrisCount();
+  int getNextTetrisCount();
   
-  public Matrix<Block> getNextTetris(int index);
+  Matrix<Block> getNextTetris(int index);
   
-  public Matrix<Block> getCurrentTetris();
+  Matrix<Block> getCurrentTetris();
   
-  public Matrix<Block> getHoldTetris();
+  Matrix<Block> getHoldTetris();
   
-  public GameState getGameState();
+  GameState getGameState();
   
-  public TetrisGameInfor getGameInfor();
+  TetrisGameInfor getGameInfor();
   
   /*---------------------------------------------------------------------------
    * modifications
    ---------------------------------------------------------------------------*/
   
-  public void perform(TetrisGameCommand command, long current); // current 是纳秒
+  void perform(TetrisGameCommand command, long current); // current 是纳秒
   
-  public void tick(long current);
+  void tick(long current);
   
-  public void refreshFPS(long current);
+  void refreshFPS(long current);
 }
